@@ -6,6 +6,7 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Kismet/GameplayStatics.h"
 #include "Slash/DebugMacros.h"
 
 
@@ -52,18 +53,15 @@ void AEnemy::Tick(float DeltaTime)
 void AEnemy::DirectionalHitReact(const FVector& ImpactPoint)
 {
 	const FVector Forward = GetActorForwardVector();
-	UKismetSystemLibrary::DrawDebugArrow(this, GetActorLocation(), GetActorLocation() + Forward * 100.f, 5.f, FColor::Blue, 5.f);
 
 	const FVector ImpactLowered(ImpactPoint.X, ImpactPoint.Y, GetActorLocation().Z);
 	const FVector CenterToHit = (ImpactLowered - GetActorLocation()).GetSafeNormal();
-	UKismetSystemLibrary::DrawDebugArrow(this, GetActorLocation(), GetActorLocation() + CenterToHit * 100.f, 5.f, FColor::Red, 5.f);
 
 	const double CosTheta = FVector::DotProduct(Forward, CenterToHit);
 	double Theta = FMath::Acos(CosTheta);
 	Theta = FMath::RadiansToDegrees(Theta);
 
 	const FVector CrossProduct = FVector::CrossProduct(Forward, CenterToHit);
-	UKismetSystemLibrary::DrawDebugArrow(this, GetActorLocation(), GetActorLocation() + CrossProduct * 100.f, 5.f, FColor::Green, 5.f);
 
 	if (CrossProduct.Z < 0)
 	{
@@ -88,8 +86,40 @@ void AEnemy::DirectionalHitReact(const FVector& ImpactPoint)
 
 void AEnemy::GetHit(const FVector& ImpactPoint)
 {
-	DRAW_SPHERE(ImpactPoint);
+	//DRAW_SPHERE(ImpactPoint);
 
 	DirectionalHitReact(ImpactPoint);
+
+	if (HitSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(
+			this,
+			HitSound,
+			ImpactPoint
+			);
+	}
+
+	if (HitParticles)
+	{
+		UGameplayStatics::SpawnEmitterAtLocation(
+			GetWorld(),
+			HitParticles,
+			ImpactPoint);
+	}
+	
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

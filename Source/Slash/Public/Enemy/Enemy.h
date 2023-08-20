@@ -7,6 +7,8 @@
 #include "Enemy.generated.h"
 
 class UAnimMontage;
+class USoundBase;
+class UParticleSystem;
 
 UCLASS()
 class SLASH_API AEnemy : public ACharacter, public IHitInterface
@@ -29,5 +31,12 @@ protected:
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "Montages")
 	TObjectPtr<UAnimMontage> HitReactMontage;
+	
+	UPROPERTY(EditAnywhere, Category = "Sounds")
+	TObjectPtr<USoundBase> HitSound;
+	
+	UPROPERTY(EditAnywhere, Category = "VisualEffects")
+	TObjectPtr<UParticleSystem> HitParticles;
+	
 public:
 };
