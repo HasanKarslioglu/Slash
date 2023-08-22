@@ -1,4 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -6,10 +5,7 @@
 #include "Items/Item.h"
 #include "Weapon.generated.h"
 
-/**
- * 
- */
- class USoundBase;
+class USoundBase;
 class UBoxComponent;
 
 UCLASS()
@@ -19,9 +15,11 @@ class SLASH_API AWeapon : public AItem
 
 public:
 	AWeapon();
-	void AttachMeshToSocket(USceneComponent* InParent, const FName& InSocketName);
-	void Equip(USceneComponent* InParent, FName InSocketName);
 	TArray<AActor*> IgnoreActors;
+
+	void AttachMeshToSocket(USceneComponent* InParent, const FName& InSocketName);
+	void Equip(USceneComponent* InParent, FName InSocketName, AActor* NewOwner, APawn* NewInstigator);
+
 
 protected:
 	virtual void BeginPlay() override;
@@ -42,7 +40,10 @@ private:
     TObjectPtr<USceneComponent> BoxTraceStart;
 	
 	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<USceneComponent> BoxTraceEnd;   
+	TObjectPtr<USceneComponent> BoxTraceEnd;
+
+	UPROPERTY(EditAnywhere)
+	float Damage = 20;
 
 public:
 	FORCEINLINE UBoxComponent* GetWeaponBox() const {return  WeaponBox;}

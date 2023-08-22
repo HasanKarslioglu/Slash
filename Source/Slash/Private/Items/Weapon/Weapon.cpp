@@ -37,13 +37,16 @@ void AWeapon::AttachMeshToSocket(USceneComponent* InParent, const FName&  InSock
 	ItemMesh->AttachToComponent(InParent, TransformRules,InSocketName);
 }
 
-void AWeapon::Equip(USceneComponent* InParent, FName InSocketName)
+void AWeapon::Equip(USceneComponent* InParent, FName InSocketName, AActor* NewOwner, APawn* NewInstigator)
 {
+	SetOwner(NewOwner);
+	SetInstigator(NewInstigator);
+	
 	if (EmbersEffect)
 	{
 		EmbersEffect->Deactivate();
 	}
-	
+
 	AttachMeshToSocket(InParent, InSocketName);		
 	ItemState = EItemState::ETS_Equipped;
 
@@ -95,6 +98,14 @@ void AWeapon::OnBoxOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Oth
 
 	if (BoxHitResult.GetActor())
 	{
+		UGameplayStatics::ApplyDamage(
+					BoxHitResult.GetActor(),
+					Damage,
+					GetInstigator()->GetController(),
+					this,
+					UDamageType::StaticClass()
+					);
+		
 		IHitInterface* HitInterface = Cast<IHitInterface>(BoxHitResult.GetActor());
 		if (HitInterface)
 		{
@@ -103,6 +114,8 @@ void AWeapon::OnBoxOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Oth
 		IgnoreActors.AddUnique(BoxHitResult.GetActor());
 		
 		CreateFields(BoxHitResult.ImpactPoint);
+
+		
 	}
 }
 

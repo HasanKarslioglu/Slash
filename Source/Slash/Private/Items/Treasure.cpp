@@ -19,4 +19,5 @@ void ATreasure::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor
 		}
 		Destroy();
 	}
+
 }
