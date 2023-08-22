@@ -1,8 +1,8 @@
-// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Items/Weapon/Weapon.h"
 
+#include "NiagaraComponent.h"
 #include "Components/BoxComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
@@ -39,6 +39,11 @@ void AWeapon::AttachMeshToSocket(USceneComponent* InParent, const FName&  InSock
 
 void AWeapon::Equip(USceneComponent* InParent, FName InSocketName)
 {
+	if (EmbersEffect)
+	{
+		EmbersEffect->Deactivate();
+	}
+	
 	AttachMeshToSocket(InParent, InSocketName);		
 	ItemState = EItemState::ETS_Equipped;
 

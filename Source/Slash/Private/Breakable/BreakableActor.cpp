@@ -3,6 +3,7 @@
 
 #include "Components/CapsuleComponent.h"
 #include "GeometryCollection/GeometryCollectionComponent.h"
+#include "Chaos/ChaosGameplayEventDispatcher.h"
 #include "Items/Treasure.h"
 
 ABreakableActor::ABreakableActor()
@@ -19,12 +20,14 @@ ABreakableActor::ABreakableActor()
 	Capsule->SetupAttachment(GetRootComponent());
 	Capsule->SetCollisionResponseToAllChannels(ECR_Ignore);
 	Capsule->SetCollisionResponseToChannel(ECC_Pawn, ECR_Block);
+
 }
 
 void ABreakableActor::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	GeometryCollection->OnChaosBreakEvent.AddDynamic(this, &ABreakableActor::OnChaosBreak);
 }
 
 void ABreakableActor::Tick(float DeltaTime)
@@ -33,15 +36,31 @@ void ABreakableActor::Tick(float DeltaTime)
 
 }
 
+void ABreakableActor::OnChaosBreak(const FChaosBreakEvent& BreakEvent)
+{
+	if(bBroken) return;
+	bBroken = true;
+	SpawnTreasure();
+}
+
 void ABreakableActor::GetHit_Implementation(const FVector& ImpactPoint)
+{
+	if(bBroken) return;
+	bBroken = true;
+	SpawnTreasure();
+}
+
+void ABreakableActor::SpawnTreasure()
 {
 	UWorld* World = GetWorld();
 
-	if (World && TreasureClass)
+	if (World && TreasureClass.Num() > 0)
 	{
 		FVector	Location = GetActorLocation();
 		Location.Z = 75.f;
-		World->SpawnActor<ATreasure>(TreasureClass, Location, GetActorRotation());	
-	}
-}
 
+		const int32 Selection = FMath::RandRange(0, TreasureClass.Num() - 1);
+		
+		World->SpawnActor<ATreasure>(TreasureClass[Selection], Location, GetActorRotation());	
+	}	
+}

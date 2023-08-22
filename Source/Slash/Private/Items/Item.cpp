@@ -3,6 +3,7 @@
 
 #include "Character/SlashCharacter.h"
 #include "Components/SphereComponent.h"
+#include "NiagaraComponent.h"
 #include "Components/StaticMeshComponent.h"
 
 
@@ -16,7 +17,9 @@ AItem::AItem()
 	
 	Sphere = CreateDefaultSubobject<USphereComponent>(TEXT("Collision"));
 	Sphere->SetupAttachment(GetRootComponent());
-	
+
+	EmbersEffect = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Embers"));
+	EmbersEffect->SetupAttachment(GetRootComponent());
 }
 
 void AItem::BeginPlay()

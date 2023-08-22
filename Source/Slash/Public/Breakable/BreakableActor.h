@@ -30,8 +30,13 @@ protected:
 	TObjectPtr<UCapsuleComponent> Capsule;
 
 private:
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<ATreasure> TreasureClass;
+	UPROPERTY(EditAnywhere, Category = "Breakable Properties")
+	TArray<TSubclassOf<ATreasure>> TreasureClass;
 
+	void SpawnTreasure();
+	UFUNCTION()
+	void OnChaosBreak(const struct FChaosBreakEvent& BreakEvent);
+
+	bool bBroken = false;
 public:	
 };
