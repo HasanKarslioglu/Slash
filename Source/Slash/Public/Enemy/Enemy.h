@@ -6,6 +6,7 @@
 #include "Interfaces/HitInterface.h"
 #include "Enemy.generated.h"
 
+class AAIController;
 class UHealthBarComponent;
 class UAttributeComponent;
 class UAnimMontage;
@@ -34,6 +35,8 @@ protected:
 
 	void Die();
 
+	bool InTargetRange(AActor* Target, double Radius);
+
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "Montages")
 	TObjectPtr<UAnimMontage> HitReactMontage;
@@ -52,6 +55,22 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UHealthBarComponent> HealthBarWidget;
-	
+
+	UPROPERTY()
+	TObjectPtr<AActor> CombatTarget;
+
+	UPROPERTY(EditAnywhere)
+	double CombatRadius = 500.f;
+	UPROPERTY(EditAnywhere)
+	double PatrolRadius = 20.f;
+
+	UPROPERTY(EditInstanceOnly, Category = "AI Navigation")
+	TObjectPtr<AActor> PatrolTarget;
+
+	UPROPERTY(EditInstanceOnly, Category = "AI Navigation")
+	TArray<TObjectPtr<AActor>> PatrolTargets; 
+
+	UPROPERTY()
+	TObjectPtr<AAIController> AIController;
 public:
 };

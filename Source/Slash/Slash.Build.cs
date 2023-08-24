@@ -19,7 +19,8 @@ public class Slash : ModuleRules
 			"Niagara",
 			"GeometryCollectionEngine",
 			"ChaosSolverEngine",
-			"UMG"
+			"UMG",
+			"AIModule"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
