@@ -12,6 +12,7 @@
 #include "HUD/HealthBarComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/GameplayStatics.h"
+#include "Navigation/PathFollowingComponent.h"
 #include "Slash/DebugMacros.h"
 
 
@@ -129,7 +130,7 @@ void AEnemy::Tick(float DeltaTime)
 		if (InTargetRange(PatrolTarget, PatrolRadius))
 		{
 			TArray<AActor*> ValidTargets;
-			for (AActor* Target : PatrolTarget)
+			for (TObjectPtr<AActor> Target : PatrolTargets)
 			{
 				if (Target != PatrolTarget)
 				{
