@@ -41,8 +41,8 @@ protected:
 	bool InTargetRange(AActor* Target, double Radius);
 
 	TObjectPtr<AActor> ChoosePatrolTarget();
-	void CheckCombatTarget();
 	void CheckPatrolTarget();
+	void CheckCombatTarget();
 
 	UPROPERTY(EditAnywhere, Category = "Patrol Target")
 	float PatrolPointMinTime = 3.f;
