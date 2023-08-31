@@ -5,12 +5,12 @@
 #include "GroomComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
-#include "Items/Item.h"
 #include "Animation/AnimMontage.h"
-#include "Components/BoxComponent.h"
 #include "Items/Weapon/Weapon.h"
 
+
 //-------------------------------------------------------------------------//
+
 ASlashCharacter::ASlashCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -63,20 +63,6 @@ void ASlashCharacter::BeginPlay()
 	}
 }
 
-void ASlashCharacter::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-
-void ASlashCharacter::SetWeaponCollisionEnable(ECollisionEnabled::Type CollisionEnabled)
-{
-	if (EquippedWeapon && EquippedWeapon->GetWeaponBox())
-	{
-		EquippedWeapon->GetWeaponBox()->SetCollisionEnabled(CollisionEnabled);
-		EquippedWeapon->IgnoreActors.Empty();
-	}
-}
 
 //-------------------------------------------------------------------------//
 
@@ -172,9 +158,22 @@ void ASlashCharacter::FinishEquipping()
 	ActionState = EActionState::EAS_Unoccupied;
 }
 
+void ASlashCharacter::PlayEquipMontage(FName SectionName)
+{
+
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	if (AnimInstance && EquipMontage)
+	{
+		AnimInstance->Montage_Play(EquipMontage);
+		AnimInstance->Montage_JumpToSection(SectionName, EquipMontage);
+	}
+}
+
+
+//-------------------------------------------------------------------------//
+
 void ASlashCharacter::Attack(const FInputActionValue& Value)
 {
-	
 	if(CanAttack())
 	{
 		PlayAttackMontage();
@@ -188,19 +187,6 @@ bool ASlashCharacter::CanAttack()
 		ActionState == EActionState::EAS_Unoccupied &&
 		CharacterState != ECharacterState::ECS_Unequipped;
 }
-
-void ASlashCharacter::PlayEquipMontage(FName SectionName)
-{
-
-	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
-	if (AnimInstance && EquipMontage)
-	{
-		AnimInstance->Montage_Play(EquipMontage);
-		AnimInstance->Montage_JumpToSection(SectionName, EquipMontage);
-	}
-}
-
-
 
 void ASlashCharacter::PlayAttackMontage()
 {
