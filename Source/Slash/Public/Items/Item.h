@@ -24,7 +24,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 protected:
-	EItemState ItemState =EItemState::EIS_Hovering;
+	EItemState ItemState = EItemState::EIS_Hovering;
 
 	virtual void BeginPlay() override;
 	

@@ -15,7 +15,7 @@ class SLASH_API AWeapon : public AItem
 
 public:
 	AWeapon();
-	TArray<AActor*> IgnoreActors;
+	TArray<TObjectPtr<AActor>> IgnoreActors;
 
 	void AttachMeshToSocket(USceneComponent* InParent, const FName& InSocketName);
 	void Equip(USceneComponent* InParent, FName InSocketName, AActor* NewOwner, APawn* NewInstigator);
