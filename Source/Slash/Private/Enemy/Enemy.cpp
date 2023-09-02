@@ -8,6 +8,7 @@
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "HUD/HealthBarComponent.h"
+#include "Items/Weapon/Weapon.h"
 #include "Kismet/GameplayStatics.h"
 #include "Navigation/PathFollowingComponent.h"
 #include "Perception/PawnSensingComponent.h"
@@ -39,6 +40,17 @@ AEnemy::AEnemy()
 void AEnemy::BeginPlay()
 {
 	Super::BeginPlay();
+
+	UWorld* World = GetWorld();
+	if (World && WeaponClass)
+	{
+		AWeapon* DefaultWeapon = World->SpawnActor<AWeapon>(WeaponClass);
+		if (DefaultWeapon)
+		{
+			DefaultWeapon->Equip(GetMesh(), FName("RightHandSocket"), this, this);
+			EquippedWeapon = DefaultWeapon;
+		}
+	}
 	
 	if (PawnSensing)
 	{
@@ -97,7 +109,7 @@ void AEnemy::CheckCombatTarget()
 	}else if (InTargetRange(CombatTarget, AttackRadius) && EnemyState != EEnemyState::EES_Attacking)
 	{
 		EnemyState = EEnemyState::EES_Attacking;
-		//TODO Play Attack Montage		
+		Attack();
 	}
 }
 
@@ -134,7 +146,7 @@ void AEnemy::MoveToTarget(AActor* Target)
 	
 	FAIMoveRequest MoveRequest;
 	MoveRequest.SetGoalActor(Target);
-	MoveRequest.SetAcceptanceRadius(15.f);
+	MoveRequest.SetAcceptanceRadius(50.f);
 	AIController->MoveTo(MoveRequest);
 }
 
@@ -142,6 +154,28 @@ void AEnemy::PatrolTimerFinished()
 {
 	MoveToTarget(PatrolTarget);
 	GetCharacterMovement()->MaxWalkSpeed = 150.f;
+}
+
+void AEnemy::Attack()
+{
+	Super::Attack();
+	PlayAttackMontage();
+}
+
+void AEnemy::PlayAttackMontage()
+{
+	Super::PlayAttackMontage();
+
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	AnimInstance->Montage_Play(AttackMontage);
+	if (AnimInstance && AttackMontage)
+	{
+		AnimInstance->Montage_Play(AttackMontage);
+		const int Selection = FMath::RandRange(0, AttackMontage->GetNumSections() - 1); 
+		FName SectionName = FName(AttackMontage->GetSectionName(Selection));
+		GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, FString::Printf(TEXT("%s"), *SectionName.ToString()));
+		AnimInstance->Montage_JumpToSection(SectionName, AttackMontage);
+	}
 }
 
 void AEnemy::Die()
@@ -160,12 +194,12 @@ void AEnemy::Die()
 		AnimInstance->Montage_JumpToSection(SectionName, DeathMontage);
 	}
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	SetLifeSpan(15.f);
+	GetMesh()->SetCollisionResponseToChannel(ECC_Visibility, ECR_Ignore);
+	SetLifeSpan(LifeSpanTime);
 	if (HealthBarWidget)
 	{
 		HealthBarWidget->SetVisibility(false);
 	}
-	//TODO: Play Death Montage
 }
 
 bool AEnemy::InTargetRange(AActor* Target, double Radius)
@@ -246,6 +280,16 @@ float AEnemy::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AC
 	GetCharacterMovement()->MaxWalkSpeed = 300.f;
 	MoveToTarget(CombatTarget);
 	return DamageAmount;
+}
+
+void AEnemy::Destroyed()
+{
+	Super::Destroyed();
+
+	if (EquippedWeapon)
+	{
+		EquippedWeapon->Destroy();
+	}
 }
 
 

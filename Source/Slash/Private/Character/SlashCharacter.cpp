@@ -174,6 +174,7 @@ void ASlashCharacter::PlayEquipMontage(FName SectionName)
 
 void ASlashCharacter::Attack(const FInputActionValue& Value)
 {
+	Super::Attack(Value);
 	if(CanAttack())
 	{
 		PlayAttackMontage();
@@ -190,6 +191,7 @@ bool ASlashCharacter::CanAttack()
 
 void ASlashCharacter::PlayAttackMontage()
 {
+	Super::PlayAttackMontage();
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	if (AnimInstance && AttackMontage)
 	{

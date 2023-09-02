@@ -26,6 +26,8 @@ public:
 	virtual void GetHit_Implementation(const FVector& ImpactPoint) override;
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 	
+	virtual void Destroyed() override;
+	
 protected:
 	virtual void BeginPlay() override;
 
@@ -71,6 +73,9 @@ protected:
 	UPROPERTY(EditAnywhere)
 	double AttackRadius = 150.f;
 
+	virtual void Attack() override;
+	virtual void PlayAttackMontage() override;
+
 	UFUNCTION()
 	void PawnSeen(APawn* SeenPawn);
 
@@ -83,4 +88,10 @@ protected:
 	TObjectPtr<UHealthBarComponent> HealthBarWidget;
 	UPROPERTY()
 	TObjectPtr<AAIController> AIController;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class AWeapon> WeaponClass;
+
+	UPROPERTY(EditAnywhere, Category = "LifeSpan Time", meta = (AllowPrivateAccess = "true"))
+	float LifeSpanTime = 5.f;
 };

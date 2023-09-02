@@ -29,6 +29,7 @@ protected:
 	 * Attack Functions
 	 */
 	virtual void Attack(const struct FInputActionValue& Value) {};
+	virtual void Attack() {};
 	virtual void PlayAttackMontage() {};
 	virtual bool CanAttack() {return false;};
 	UFUNCTION(BlueprintCallable)
