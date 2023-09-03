@@ -62,8 +62,12 @@ protected:
 	virtual void Die() {};
 	void PlayHitReactMontage(const FName& SectionName);
 	virtual void DirectionalHitReact(const FVector& ImpactPoint);
-
-
+	virtual void HandleDamage(float DamageAmount);
+	
+	void PlayHitSound(const FVector& ImpactPoint);
+	void SpawnHitParticles(const FVector& ImpactPoint);
+	
+	
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UAttributeComponent> Attributes; 
 	

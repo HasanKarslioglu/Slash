@@ -65,7 +65,7 @@ void AEnemy::BeginPlay()
 	{
 		PatrolTarget = PatrolTargets[0];
 	}
-	MoveToTarget(PatrolTarget);
+	StartPatrolling();
 }
 
 void AEnemy::Tick(float DeltaTime)
@@ -171,6 +171,15 @@ void AEnemy::PlayAttackMontage()
 	}
 }
 
+void AEnemy::HandleDamage(float DamageAmount)
+{
+	Super::HandleDamage(DamageAmount);
+	if (HealthBarWidget)
+	{
+		HealthBarWidget->SetHealthPercent(Attributes->GetHealthPercent());
+	}
+}
+
 void AEnemy::Die()
 {
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
@@ -227,46 +236,22 @@ void AEnemy::GetHit_Implementation(const FVector& ImpactPoint)
 {
 	SetHealthBarVisibilty(true);
 	
-	if (Attributes && Attributes->IsAlive())
+	if (IsAlive())
 	{
 		DirectionalHitReact(ImpactPoint);
 	}
-	else
-	{
-		Die();
-	}
+	else Die();
 
-	if (HitSound)
-	{
-		UGameplayStatics::PlaySoundAtLocation(
-			this,
-			HitSound,
-			ImpactPoint
-			);
-	}
-
-	if (HitParticles)
-	{
-		UGameplayStatics::SpawnEmitterAtLocation(
-			GetWorld(),
-			HitParticles,
-			ImpactPoint);
-	}
-	
+	PlayHitSound(ImpactPoint);
+	SpawnHitParticles(ImpactPoint);
 }
 
 float AEnemy::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator,
 	AActor* DamageCauser)
 {
-	if (Attributes && HealthBarWidget)
-	{
-		Attributes->ReceiveDamage(DamageAmount);
-		HealthBarWidget->SetHealthPercent(Attributes->GetHealthPercent());
-	}
+	HandleDamage(DamageAmount);
 	CombatTarget = EventInstigator->GetPawn();
-	EnemyState = EEnemyState::EES_Chasing;
-	GetCharacterMovement()->MaxWalkSpeed = ChasingSpeed;
-	MoveToTarget(CombatTarget);
+	ChaseTarget();
 	return DamageAmount;
 }
 

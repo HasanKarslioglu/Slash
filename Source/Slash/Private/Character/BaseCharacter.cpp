@@ -3,6 +3,7 @@
 #include "Components/AttributeComponent.h"
 #include "Components/BoxComponent.h"
 #include "Items/Weapon/Weapon.h"
+#include "Kismet/GameplayStatics.h"
 
 ABaseCharacter::ABaseCharacter()
 {
@@ -62,6 +63,42 @@ void ABaseCharacter::DirectionalHitReact(const FVector& ImpactPoint)
 	}
 	
 	PlayHitReactMontage(Section);
+}
+
+void ABaseCharacter::HandleDamage(float DamageAmount)
+{
+	if (Attributes)
+	{
+		Attributes->ReceiveDamage(DamageAmount);
+	}
+}
+
+void ABaseCharacter::PlayHitSound(const FVector& ImpactPoint)
+{
+	if (HitSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(
+			this,
+			HitSound,
+			ImpactPoint
+			);
+	}
+}
+
+void ABaseCharacter::SpawnHitParticles(const FVector& ImpactPoint)
+{
+	if (HitParticles)
+	{
+		UGameplayStatics::SpawnEmitterAtLocation(
+			GetWorld(),
+			HitParticles,
+			ImpactPoint);
+	}
+}
+
+bool ABaseCharacter::IsAlive()
+{
+	return Attributes && Attributes->IsAlive();
 }
 
 

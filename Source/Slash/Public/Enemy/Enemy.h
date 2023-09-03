@@ -52,7 +52,7 @@ protected:
 	float PatrolPointMaxTime = 6.f;
 
 	UPROPERTY(EditAnywhere)
-	double PatrolRadius = 20.f;
+	double PatrolRadius = 200.f;
 	
 	UPROPERTY(EditInstanceOnly, Category = "AI Navigation")
 	TObjectPtr<AActor> PatrolTarget;
@@ -76,7 +76,8 @@ protected:
 
 	virtual void Attack() override;
 	virtual void PlayAttackMontage() override;
-
+	virtual void HandleDamage(float DamageAmount) override;
+	
 	UFUNCTION()
 	void PawnSeen(APawn* SeenPawn);
 
