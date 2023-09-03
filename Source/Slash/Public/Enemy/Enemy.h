@@ -31,6 +31,7 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+	UPROPERTY(BlueprintReadOnly)
 	EEnemyState EnemyState = EEnemyState::EES_Patrolling;
 
 	bool InTargetRange(AActor* Target, double Radius);
@@ -94,4 +95,40 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "LifeSpan Time", meta = (AllowPrivateAccess = "true"))
 	float LifeSpanTime = 5.f;
+
+	/*
+	 * Combat
+	 */
+	FTimerHandle AttackTimer;
+	void StartAttackTimer();
+	void ClearAttackTimer();
+	
+	UPROPERTY(EditAnywhere, Category = "Combat")
+	float AttackMin = 0.5;
+	UPROPERTY(EditAnywhere, Category = "Combat")
+	float AttackMax = 1.f;
+
+	UPROPERTY(EditAnywhere, Category = "Combat")
+	float PatrollingSpeed = 150.f;
+	
+	UPROPERTY(EditAnywhere, Category = "Combat")
+	float ChasingSpeed = 300.f;
+
+	virtual bool CanAttack() override;
+private:
+	/*
+	 * AI Behavior
+	 */
+	void SetHealthBarVisibilty(bool value);
+	void LoseInterest();
+	void StartPatrolling();
+	bool IsOutsideCombatRadius();
+	void ChaseTarget();
+	bool IsOutsideAttackRadius();
+	bool IsChasing();
+	bool IsInsideAttackRadius();
+	bool IsAttacking();
+	void ClearPatrolTimer();
+	bool IsDead();
+	bool IsEngaged();
 };

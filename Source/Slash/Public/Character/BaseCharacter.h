@@ -69,4 +69,6 @@ protected:
 	
 	UPROPERTY(VisibleAnywhere, Category = Weapon)
 	TObjectPtr<AWeapon> EquippedWeapon;
+	
+	bool IsAlive();
 };
