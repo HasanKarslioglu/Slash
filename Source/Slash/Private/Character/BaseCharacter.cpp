@@ -21,6 +21,29 @@ void ABaseCharacter::SetWeaponCollisionEnable(ECollisionEnabled::Type CollisionE
 	}
 }
 
+void ABaseCharacter::PlayAttackMontage()
+{
+	PlayRandomMontage(AttackMontage);
+}
+
+void ABaseCharacter::PlayDeathMontage()
+{
+	PlayRandomMontage(DeathMontage);
+}
+
+void ABaseCharacter::PlayRandomMontage(UAnimMontage* Montage)
+{
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	AnimInstance->Montage_Play(Montage);
+	if (AnimInstance && Montage)
+	{
+		AnimInstance->Montage_Play(Montage);
+		const int Selection = FMath::RandRange(0, Montage->GetNumSections() - 1); 
+		FName SectionName = FName(Montage->GetSectionName(Selection));
+		AnimInstance->Montage_JumpToSection(SectionName, Montage);
+	}
+}
+
 void ABaseCharacter::PlayHitReactMontage(const FName& SectionName)
 {
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();

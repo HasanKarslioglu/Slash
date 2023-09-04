@@ -75,7 +75,6 @@ protected:
 	double AttackRadius = 150.f;
 
 	virtual void Attack() override;
-	virtual void PlayAttackMontage() override;
 	virtual void HandleDamage(float DamageAmount) override;
 	
 	UFUNCTION()

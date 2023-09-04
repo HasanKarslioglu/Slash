@@ -155,22 +155,6 @@ void AEnemy::Attack()
 	PlayAttackMontage();
 }
 
-void AEnemy::PlayAttackMontage()
-{
-	Super::PlayAttackMontage();
-
-	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
-	AnimInstance->Montage_Play(AttackMontage);
-	if (AnimInstance && AttackMontage)
-	{
-		AnimInstance->Montage_Play(AttackMontage);
-		const int Selection = FMath::RandRange(0, AttackMontage->GetNumSections() - 1); 
-		FName SectionName = FName(AttackMontage->GetSectionName(Selection));
-		GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, FString::Printf(TEXT("%s"), *SectionName.ToString()));
-		AnimInstance->Montage_JumpToSection(SectionName, AttackMontage);
-	}
-}
-
 void AEnemy::HandleDamage(float DamageAmount)
 {
 	Super::HandleDamage(DamageAmount);
@@ -182,26 +166,13 @@ void AEnemy::HandleDamage(float DamageAmount)
 
 void AEnemy::Die()
 {
-	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
-	if (AnimInstance && DeathMontage)
-	{
-		AnimInstance->Montage_Play(DeathMontage);
-
-		const int32 Selection = FMath::RandRange(1,DeathMontage->CompositeSections.Num());
-
-		FString SectionString = FString::Printf(TEXT("Death%i"), Selection);
-		
-		FName SectionName = FName(SectionString);
-		
-		AnimInstance->Montage_JumpToSection(SectionName, DeathMontage);
-	}
+	PlayDeathMontage();
+	EnemyState = EEnemyState::EES_Dead;
+	ClearAttackTimer();
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	GetMesh()->SetCollisionResponseToChannel(ECC_Visibility, ECR_Ignore);
+	SetHealthBarVisibilty(false);
 	SetLifeSpan(LifeSpanTime);
-	if (HealthBarWidget)
-	{
-		HealthBarWidget->SetVisibility(false);
-	}
 }
 
 bool AEnemy::InTargetRange(AActor* Target, double Radius)

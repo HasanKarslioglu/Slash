@@ -44,7 +44,6 @@ protected:
 	 * Attack Functions
 	 */
 	virtual void Attack(const FInputActionValue& Value) override;
-	virtual void PlayAttackMontage() override;
 	virtual bool CanAttack() override;
 	virtual void AttackEnd() override;
 

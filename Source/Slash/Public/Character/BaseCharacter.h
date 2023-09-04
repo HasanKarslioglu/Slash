@@ -30,11 +30,14 @@ protected:
 	 */
 	virtual void Attack(const struct FInputActionValue& Value) {};
 	virtual void Attack() {};
-	virtual void PlayAttackMontage() {};
 	virtual bool CanAttack() {return false;};
 	UFUNCTION(BlueprintCallable)
 	virtual void AttackEnd() {};
-
+	
+	void PlayRandomMontage(UAnimMontage* Montage);
+	void PlayAttackMontage();
+	void PlayDeathMontage();
+	
 	/*
 	 * Animation Montages
 	 */
