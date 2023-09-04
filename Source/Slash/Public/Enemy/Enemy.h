@@ -115,6 +115,7 @@ protected:
 	float ChasingSpeed = 300.f;
 
 	virtual bool CanAttack() override;
+	virtual void AttackEnd() override;
 private:
 	/*
 	 * AI Behavior

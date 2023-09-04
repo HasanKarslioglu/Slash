@@ -152,6 +152,7 @@ void AEnemy::PatrolTimerFinished()
 void AEnemy::Attack()
 {
 	Super::Attack();
+	EnemyState = EEnemyState::EES_Engaged;
 	PlayAttackMontage();
 }
 
@@ -238,12 +239,20 @@ void AEnemy::Destroyed()
 
 bool AEnemy::CanAttack()
 {
-	const bool bCanAttack =
+	bool bCanAttack =
 		IsInsideAttackRadius() &&
 		!IsAttacking() &&
-		IsDead();
-	
+		!IsDead() &&
+		!IsEngaged()
+	;
 	return bCanAttack;
+}
+
+void AEnemy::AttackEnd()
+{
+	Super::AttackEnd();
+	EnemyState = EEnemyState::EES_NoState;
+	CheckCombatTarget();
 }
 
 void AEnemy::SetHealthBarVisibilty(bool value)
@@ -287,7 +296,7 @@ bool AEnemy::IsOutsideAttackRadius()
 
 bool AEnemy::IsChasing()
 {
-	return EnemyState != EEnemyState::EES_Chasing;
+	return EnemyState == EEnemyState::EES_Chasing;
 }
 
 bool AEnemy::IsInsideAttackRadius()
@@ -297,7 +306,7 @@ bool AEnemy::IsInsideAttackRadius()
 
 bool AEnemy::IsAttacking()
 {
-	return EnemyState != EEnemyState::EES_Attacking;	
+	return EnemyState == EEnemyState::EES_Attacking;	
 }
 
 void AEnemy::ClearPatrolTimer()
